@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'components/sidebar.dart';
 import 'colors.dart';
+import 'views/home.dart';
+import 'views/settings.dart';
 
 void main() {
   runApp(const App());
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  Widget currentPage = const HomePage();
 
   @override
   Widget build(BuildContext context) {
@@ -18,23 +27,18 @@ class App extends StatelessWidget {
             Sidebar(
               footer: const UserTile(),
               children: [
-                SidebarItem(icon: Icons.home, label: 'Home', onTap: () {}),
+                SidebarItem(icon: Icons.home, label: 'Home', onTap: () => setState(() => currentPage = const HomePage())),
                 SidebarItem(
                   icon: Icons.settings,
                   label: 'Settings',
-                  onTap: () {},
+                  onTap: () => setState(() => currentPage = const SettingsPage()),
                 ),
               ],
             ),
             Expanded(
               child: Container(
                 color: AppColors.background,
-                child: const Center(
-                  child: Text(
-                    'Main Content',
-                    style: TextStyle(color: AppColors.text, fontSize: 24),
-                  ),
-                ),
+                child: currentPage,
               ),
             ),
           ],
