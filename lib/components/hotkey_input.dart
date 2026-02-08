@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../colors.dart';
@@ -38,7 +42,10 @@ class _HotkeyInputState extends State<HotkeyInput> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListTile(
-        title: Text(widget.title, style: const TextStyle(color: AppColors.text)),
+        title: Text(
+          widget.title,
+          style: const TextStyle(color: AppColors.text),
+        ),
         subtitle: Text(
           widget.subtitle,
           style: const TextStyle(color: AppColors.textSecondary),
@@ -99,7 +106,7 @@ class _HotkeyInputState extends State<HotkeyInput> {
       _updateDisplay();
     } else if (_isKeyUp(event)) {
       if (_pressedKeys.isEmpty) return;
-      
+
       _pressedKeys.remove(event.logicalKey);
       if (_pressedKeys.isEmpty) {
         _finishCapture();

@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 import 'package:flutter/material.dart';
 import 'clips_settings_model.dart';
 import 'clips_settings_service.dart';
@@ -13,13 +17,13 @@ class ClipsController {
   final TextEditingController hotkeyController;
 
   ClipsController(this.settings)
-      : outputPathController = TextEditingController(),
-        encoderSpeedController = TextEditingController(),
-        qualityController = TextEditingController(),
-        bufferDurationController = TextEditingController(),
-        segmentDurationController = TextEditingController(),
-        tempDirController = TextEditingController(),
-        hotkeyController = TextEditingController();
+    : outputPathController = TextEditingController(),
+      encoderSpeedController = TextEditingController(),
+      qualityController = TextEditingController(),
+      bufferDurationController = TextEditingController(),
+      segmentDurationController = TextEditingController(),
+      tempDirController = TextEditingController(),
+      hotkeyController = TextEditingController();
 
   void updateControllers() {
     outputPathController.text = settings.outputPath;
@@ -37,8 +41,10 @@ class ClipsController {
     final bufferDuration = int.tryParse(bufferDurationController.text);
     final segmentDuration = int.tryParse(segmentDurationController.text);
 
-    if (encoderSpeed == null || quality == null ||
-        bufferDuration == null || segmentDuration == null) {
+    if (encoderSpeed == null ||
+        quality == null ||
+        bufferDuration == null ||
+        segmentDuration == null) {
       return 'Please enter valid numbers for all fields';
     }
 

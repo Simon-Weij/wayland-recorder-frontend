@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 import 'dart:convert';
 import 'dart:io';
 import 'clips_settings_model.dart';
@@ -18,7 +22,7 @@ class ClipsSettingsService {
     } catch (e) {
       throw Exception('Failed to load settings: $e');
     }
-    
+
     return ClipsSettings();
   }
 

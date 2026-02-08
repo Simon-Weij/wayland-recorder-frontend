@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -40,9 +44,7 @@ class _HotkeyDialogState extends State<_HotkeyDialog> {
   }
 
   Widget _buildInstructions() {
-    return const Text(
-      'Press the key combination you want to use as hotkey.',
-    );
+    return const Text('Press the key combination you want to use as hotkey.');
   }
 
   Widget _buildCapturedText() {
@@ -65,14 +67,8 @@ class _HotkeyDialogState extends State<_HotkeyDialog> {
 
   List<Widget> _buildActions() {
     return [
-      TextButton(
-        onPressed: _cancel,
-        child: const Text('Cancel'),
-      ),
-      TextButton(
-        onPressed: _confirm,
-        child: const Text('OK'),
-      ),
+      TextButton(onPressed: _cancel, child: const Text('Cancel')),
+      TextButton(onPressed: _confirm, child: const Text('OK')),
     ];
   }
 
