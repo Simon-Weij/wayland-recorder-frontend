@@ -7,6 +7,8 @@ import 'components/sidebar.dart';
 import 'colors.dart';
 import 'views/home.dart';
 import 'views/settings.dart';
+import 'components/icons/play.dart';
+import 'components/icons/stop.dart';
 
 void main() {
   runApp(const App());
@@ -22,6 +24,12 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   Widget currentPage = const HomePage();
 
+  bool _isPlaying = false;
+
+  Widget get _currentIcon => _isPlaying
+      ? StopIcon(color: AppColors.textSecondary)
+      : PlayIcon(color: AppColors.textSecondary);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,7 +37,26 @@ class _AppState extends State<App> {
         body: Row(
           children: [
             Sidebar(
-              footer: const UserTile(),
+              footer: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () =>
+                            setState(() => _isPlaying = !_isPlaying),
+                        child: SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: _currentIcon,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const UserTile(),
+                ],
+              ),
               children: [
                 SidebarItem(
                   icon: Icons.home,
