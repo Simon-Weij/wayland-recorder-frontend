@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   file_picker: ^10.3.10
   flutter_svg: ^2.0.5
+  logging: ^1.2.0
 
 dev_dependencies:
   flutter_test:

@@ -2,15 +2,24 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'components/sidebar.dart';
 import 'colors.dart';
 import 'views/home.dart';
 import 'views/settings.dart';
 import 'components/icons/play.dart';
 import 'components/icons/stop.dart';
+import 'stream/stream.dart';
 
 void main() {
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+
   runApp(const App());
 }
 
@@ -30,6 +39,8 @@ class _AppState extends State<App> {
       ? StopIcon(color: AppColors.textSecondary)
       : PlayIcon(color: AppColors.textSecondary);
 
+  String recordingPid = '';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -44,8 +55,31 @@ class _AppState extends State<App> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: () =>
-                            setState(() => _isPlaying = !_isPlaying),
+                        onPressed: () async {
+                          if (!_isPlaying) {
+                            setState(() => _isPlaying = true);
+
+                            final pid = await Stream.startStream();
+
+                            if (pid != null) {
+                              recordingPid = pid.toString();
+                              Logger.root.info('Recording started with PID: $pid');
+                            } else {
+                              Logger.root.warning('Failed to capture PID from recording process');
+                              setState(() => _isPlaying = false);
+                            }
+                          } else {
+                            if (recordingPid.isNotEmpty) {
+                              Process.killPid(int.parse(recordingPid));
+                              Logger.root.info('Killed recording process with PID: $recordingPid');
+                            } else {
+                              Logger.root.warning(
+                                'No PID found for the recording process.',
+                              );
+                            }
+                            setState(() => _isPlaying = false);
+                          }
+                        },
                         child: SizedBox(
                           width: 64,
                           height: 64,
