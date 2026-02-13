@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import '../../colors.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ClipsWidgets {
   static Widget buildSwitchTile({

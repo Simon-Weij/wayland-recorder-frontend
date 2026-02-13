@@ -3,7 +3,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import 'package:flutter/material.dart';
-import '../../colors.dart';
+import '../../../core/theme/app_colors.dart';
 
 class SettingsWidgets {
   static Widget buildSwitchTile({

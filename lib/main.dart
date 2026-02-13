@@ -5,21 +5,32 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
-import 'package:wayland_recorder_frontend/settings/videos/videos_page.dart';
-import 'components/sidebar.dart';
-import 'colors.dart';
-import 'views/home.dart';
-import 'views/settings.dart';
-import 'components/icons/play.dart';
-import 'components/icons/stop.dart';
-import 'stream/stream.dart';
+import 'package:flutter/foundation.dart';
+import 'core/logger.dart';
+import 'features/settings/subfeatures/videos/videos_page.dart';
+import 'shared/widgets/sidebar.dart';
+import 'core/theme/app_colors.dart';
+import 'features/home/pages/home_page.dart';
+import 'features/settings/pages/settings_page.dart';
+import 'shared/widgets/icons/play.dart';
+import 'shared/widgets/icons/stop.dart';
+import 'features/recorder/services/recorder_service.dart';
+import 'shared/widgets/user_tile.dart';
 
 void main() {
-  Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    print('${record.level.name}: ${record.time}: ${record.message}');
-  });
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    logger.e(
+      'Flutter Error',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    logger.e('Platform Error', error: error, stackTrace: stack);
+    return true;
+  };
 
   runApp(const App());
 }
@@ -60,15 +71,13 @@ class _AppState extends State<App> {
                           if (!_isPlaying) {
                             setState(() => _isPlaying = true);
 
-                            final pid = await Stream.startStream();
+                            final pid = await RecorderService.startStream();
 
                             if (pid != null) {
                               recordingPid = pid.toString();
-                              Logger.root.info(
-                                'Recording started with PID: $pid',
-                              );
+                              logger.i('Recording started with PID: $pid');
                             } else {
-                              Logger.root.warning(
+                              logger.w(
                                 'Failed to capture PID from recording process',
                               );
                               setState(() => _isPlaying = false);
@@ -76,11 +85,11 @@ class _AppState extends State<App> {
                           } else {
                             if (recordingPid.isNotEmpty) {
                               Process.killPid(int.parse(recordingPid));
-                              Logger.root.info(
+                              logger.i(
                                 'Killed recording process with PID: $recordingPid',
                               );
                             } else {
-                              Logger.root.warning(
+                              logger.w(
                                 'No PID found for the recording process.',
                               );
                             }
@@ -122,56 +131,6 @@ class _AppState extends State<App> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class UserTile extends StatelessWidget {
-  const UserTile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return HoverableContainer(
-      onTap: () {},
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: AppColors.border, width: 1)),
-      ),
-      borderRadius: BorderRadius.zero,
-      child: Row(
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.person,
-              color: AppColors.textSecondary,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'User Name',
-                  style: TextStyle(
-                    color: AppColors.text,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

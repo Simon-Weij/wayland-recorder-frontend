@@ -6,7 +6,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import '../../colors.dart';
+import '../../../core/logger.dart';
+import '../../../core/theme/app_colors.dart';
 
 class SettingsService {
   static Future<Map<String, dynamic>> loadSettings() async {
@@ -19,10 +20,11 @@ class SettingsService {
       if (await settingsFile.exists()) {
         final content = await settingsFile.readAsString();
         final settings = jsonDecode(content) as Map<String, dynamic>;
+        logger.i('Settings loaded successfully');
         return settings;
       }
-    } catch (e) {
-      // Ignore error
+    } catch (e, st) {
+      logger.w('Failed to load settings', error: e, stackTrace: st);
     }
     return {};
   }
@@ -102,6 +104,7 @@ class SettingsService {
 
       final settingsFile = File('${configDir.path}/settings.json');
       await settingsFile.writeAsString(jsonEncode(settings));
+      logger.i('Settings saved successfully');
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -113,7 +116,8 @@ class SettingsService {
         );
       }
       return true;
-    } catch (e) {
+    } catch (e, st) {
+      logger.e('Failed to save settings', error: e, stackTrace: st);
       if (context.mounted) {
         _showError(context, 'Failed to save settings: $e');
       }
@@ -138,9 +142,10 @@ class SettingsService {
       final result = await FilePicker.platform.getDirectoryPath();
       if (result != null) {
         controller.text = result;
+        logger.i('Directory picked: $result');
       }
-    } catch (e) {
-      // Ignore errors
+    } catch (e, st) {
+      logger.w('Failed to pick directory', error: e, stackTrace: st);
     }
   }
 }

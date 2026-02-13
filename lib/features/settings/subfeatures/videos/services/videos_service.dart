@@ -1,15 +1,21 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
+import '../../../../../core/logger.dart';
 import 'package:path/path.dart' as path;
 
-class VideosPage extends StatelessWidget {
+class VideosService {
   Future<List<File>> getVideos() async {
     final config = Directory(
       '${Platform.environment['HOME']}/.config/wayland-recorder/settings.json',
     );
+
+    if (!config.existsSync()) {
+      return [];
+    }
 
     final file = File(config.path);
     final jsonString = await file.readAsString();
@@ -49,14 +55,14 @@ class VideosPage extends StatelessWidget {
       ]);
 
       if (result.exitCode == 0 && File(thumbnailPath).existsSync()) {
-        Logger.root.info('Thumbnail saved to $thumbnailPath');
+        logger.i('Thumbnail saved to $thumbnailPath');
         return File(thumbnailPath);
       } else {
-        Logger.root.severe('Error generating thumbnail: ${result.stderr}');
+        logger.e('Error generating thumbnail: ${result.stderr}');
         return null;
       }
     } catch (e) {
-      Logger.root.severe('Failed to generate thumbnail for $videoPath: $e');
+      logger.e('Failed to generate thumbnail for $videoPath: $e');
       return null;
     }
   }
@@ -74,36 +80,5 @@ class VideosPage extends StatelessWidget {
     }
 
     return thumbnailFiles;
-  }
-
-  const VideosPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<File>>(
-      future: gatherVideoThumbnails(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No videos yet'));
-        } else {
-          final thumbnails = snapshot.data!;
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
-            ),
-            itemCount: thumbnails.length,
-            itemBuilder: (context, index) {
-              return Image.file(thumbnails[index]);
-            },
-          );
-        }
-      },
-    );
   }
 }

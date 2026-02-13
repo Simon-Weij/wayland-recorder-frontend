@@ -3,8 +3,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import 'package:flutter/material.dart';
-import '../colors.dart';
-import '../settings/clips/clips_page.dart';
+import '../../../core/theme/app_colors.dart';
+import '../subfeatures/clips/clips_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
