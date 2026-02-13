@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:wayland_recorder_frontend/settings/videos/videos_page.dart';
 import 'components/sidebar.dart';
 import 'colors.dart';
 import 'views/home.dart';
@@ -63,15 +64,21 @@ class _AppState extends State<App> {
 
                             if (pid != null) {
                               recordingPid = pid.toString();
-                              Logger.root.info('Recording started with PID: $pid');
+                              Logger.root.info(
+                                'Recording started with PID: $pid',
+                              );
                             } else {
-                              Logger.root.warning('Failed to capture PID from recording process');
+                              Logger.root.warning(
+                                'Failed to capture PID from recording process',
+                              );
                               setState(() => _isPlaying = false);
                             }
                           } else {
                             if (recordingPid.isNotEmpty) {
                               Process.killPid(int.parse(recordingPid));
-                              Logger.root.info('Killed recording process with PID: $recordingPid');
+                              Logger.root.info(
+                                'Killed recording process with PID: $recordingPid',
+                              );
                             } else {
                               Logger.root.warning(
                                 'No PID found for the recording process.',
@@ -102,6 +109,11 @@ class _AppState extends State<App> {
                   label: 'Settings',
                   onTap: () =>
                       setState(() => currentPage = const SettingsPage()),
+                ),
+                SidebarItem(
+                  icon: Icons.video_call_outlined,
+                  label: 'Videos',
+                  onTap: () => setState(() => currentPage = VideosPage()),
                 ),
               ],
             ),
