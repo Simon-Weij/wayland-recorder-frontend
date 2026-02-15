@@ -7,17 +7,27 @@ import 'dart:io';
 import '../../../../../core/logger.dart';
 import 'package:path/path.dart' as path;
 
+class VideoMetadata {
+  final File thumbnail;
+  final File video;
+
+  VideoMetadata(this.thumbnail, this.video);
+}
+
 class VideosService {
   Future<List<File>> getVideos() async {
-    final config = Directory(
-      '${Platform.environment['HOME']}/.config/wayland-recorder/settings.json',
-    );
+    final configDir = Directory('${Platform.environment['HOME']}/.config/wayland-recorder');
 
-    if (!config.existsSync()) {
+    if (!configDir.existsSync()) {
       return [];
     }
 
-    final file = File(config.path);
+    final file = File('${configDir.path}/settings.json');
+
+    if (!file.existsSync()) {
+      return [];
+    }
+
     final jsonString = await file.readAsString();
 
     final Map<String, dynamic> jsonData = jsonDecode(jsonString);
@@ -67,18 +77,18 @@ class VideosService {
     }
   }
 
-  Future<List<File>> gatherVideoThumbnails() async {
+  Future<List<VideoMetadata>> gatherVideoThumbnails() async {
     final videos = await getVideos();
-    final thumbnailFiles = <File>[];
+    final videoMetadata = <VideoMetadata>[];
     final tempDir = await Directory.systemTemp.createTemp('video_thumbnails');
 
     for (final video in videos) {
       final thumbnail = await generateThumbnail(video.path, tempDir);
       if (thumbnail != null) {
-        thumbnailFiles.add(thumbnail);
+        videoMetadata.add(VideoMetadata(thumbnail, video));
       }
     }
 
-    return thumbnailFiles;
+    return videoMetadata;
   }
 }
